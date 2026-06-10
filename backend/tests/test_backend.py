@@ -100,16 +100,22 @@ class TestHRPolicyBotBackend(unittest.TestCase):
     # ------------------------------------------------------------------
     def test_chat_without_api_key_returns_503(self):
         """When the API key is not configured, the endpoint returns 503."""
-        original_key = settings.GEMINI_API_KEY
+        original_provider = settings.AI_PROVIDER
+        original_gemini = settings.GEMINI_API_KEY
+        original_groq = settings.GROQ_API_KEY
         try:
-            settings.GEMINI_API_KEY = "YOUR_GEMINI_API_KEY"   # placeholder = not configured
+            settings.AI_PROVIDER = "google_genai"
+            settings.GEMINI_API_KEY = "YOUR_GEMINI_API_KEY"
+            settings.GROQ_API_KEY = ""
             response = self.client.post("/api/chat", json={
                 "message": "How many casual leaves do I get?",
                 "history": [],
             })
             self.assertEqual(response.status_code, 503)
         finally:
-            settings.GEMINI_API_KEY = original_key
+            settings.AI_PROVIDER = original_provider
+            settings.GEMINI_API_KEY = original_gemini
+            settings.GROQ_API_KEY = original_groq
 
     # ------------------------------------------------------------------
     # Schema validation — history cap

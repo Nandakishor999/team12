@@ -15,16 +15,10 @@ def _resolve_policy_path() -> str:
 
 @lru_cache(maxsize=1)
 def load_policies() -> dict[str, Any]:
-    """
-    Load and cache the HR policy JSON from disk.
+    """Load and cache the HR policy JSON from disk (legacy single-company mode)."""
+    # LRU cache (size=1) ensures the file is read exactly once per process
+    # lifetime — subsequent calls return the cached dict at O(1) speed.
 
-    LRU cache (size=1) ensures the file is read exactly once per process
-    lifetime — subsequent calls return the cached dict at O(1) speed.
-
-    Raises:
-        FileNotFoundError: if hr_policies.json is missing.
-        json.JSONDecodeError: if the file is corrupt or invalid JSON.
-    """
     path = _resolve_policy_path()
     logger.info("Loading HR policies from %s", path)
 
@@ -44,3 +38,4 @@ def load_policies() -> dict[str, Any]:
 def get_policy_document_text() -> str:
     """Return the full policy dict serialised as an indented JSON string for prompt injection."""
     return json.dumps(load_policies(), indent=2, ensure_ascii=False)
+

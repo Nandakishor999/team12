@@ -184,14 +184,17 @@ TEST_CASES = [
 def run_tests():
     client = TestClient(app)
     
-    # Check if Gemini API key is actually set and configured
-    is_live = False
-    if settings.GEMINI_API_KEY and settings.GEMINI_API_KEY != "YOUR_GEMINI_API_KEY":
-        is_live = True
-        print("Starting automated tests with LIVE Gemini API...")
+    # Check if the configured API provider has a valid API key.
+    is_live = settings.is_api_configured
+    if is_live:
+        print(
+            f"Starting automated tests with LIVE AI provider '{settings.active_provider}'..."
+        )
     else:
-        print("GEMINI_API_KEY is not set. Generating test log using standard simulated responses.")
-        print("Once you set your API key in .env, run this script again to execute live queries!")
+        print(
+            "AI provider is not configured. Generating test log using standard simulated responses."
+        )
+        print("Once you set the appropriate API key in .env, run this script again to execute live queries!")
         
     results = {}
     
